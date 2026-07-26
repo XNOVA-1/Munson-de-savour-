@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Munson de Savour — Tasting Menu, Benin City</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;1,9..144,400&family=Work+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --ink:#130f0e;
+    --ink-2:#1c1614;
+    --wine:#5c1a2b;
+    --wine-light:#7c2c40;
+    --brass:#b08d57;
+    --brass-light:#d3b483;
+    --ivory:#efe7da;
+    --ivory-dim:#c9beac;
+    --sage:#6e7a5c;
+    --line: rgba(239,231,218,0.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--ivory);
+    font-family:'Work Sans', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    cursor:auto;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:450;
+    letter-spacing:-0.01em;
+  }
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--brass-light);
+  }
+  a{color:inherit;}
+  img{display:block;width:100%;height:100%;object-fit:cover;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 6vw;}
+  @media(min-width:1000px){.wrap{padding:0 4vw;}}
+
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:998;opacity:0.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+
+  /* ---------- CUSTOM CURSOR ---------- */
+  .cursor-dot,.cursor-ring{
+    position:fixed;top:0;left:0;pointer-events:none;z-index:10000;
+    border-radius:50%;transform:translate(-50%,-50%);
+    will-change:transform;
+  }
+  .cursor-dot{width:6px;height:6px;background:var(--brass-light);}
+  .cursor-ring{width:34px;height:34px;border:1px solid rgba(211,180,131,0.55);transition:width .25s,height .25s,border-color .25s,background .25s;}
+  .cursor-ring.hover{width:56px;height:56px;background:rgba(211,180,131,0.08);border-color:var(--brass-light);}
+  body.has-cursor, body.has-cursor a, body.has-cursor button{cursor:none;}
+
+  /* ---------- PRELOADER ---------- */
+  .preloader{
+    position:fixed;inset:0;z-index:9999;background:var(--ink);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;
+  }
+  .preloader .pl-word{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:clamp(1.4rem,4vw,2.2rem);color:var(--ivory);letter-spacing:0.01em;overflow:hidden;}
+  .preloader .pl-count{font-family:'Space Mono',monospace;font-size:0.8rem;color:var(--brass-light);letter-spacing:0.2em;}
+  .preloader .pl-bar{width:220px;height:1px;background:var(--line);position:relative;overflow:hidden;}
+  .preloader .pl-bar-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--brass-light);}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.6rem 6vw;
+    mix-blend-mode:difference;
+  }
+  @media(min-width:1000px){nav{padding:1.6rem 4vw;}}
+  .brand{font-family:'Fraunces', serif;font-size:1.05rem;letter-spacing:0.02em;}
+  .brand em{font-style:italic;color:var(--brass-light);}
+  .nav-links{display:none;gap:2.4rem;font-size:0.85rem;letter-spacing:0.02em;}
+  @media(min-width:800px){.nav-links{display:flex;}}
+  .nav-links a{text-decoration:none;opacity:0.85;transition:opacity .3s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-cta{
+    font-family:'Space Mono',monospace;font-size:0.72rem;letter-spacing:0.15em;
+    border:1px solid var(--ivory);padding:0.55rem 1.1rem;text-decoration:none;
+    text-transform:uppercase;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;height:100svh;min-height:640px;
+    display:flex;align-items:flex-end;
+    overflow:hidden;
+  }
+  .hero-media{position:absolute;inset:0;}
+  .hero-media img{
+    width:100%;height:100%;object-fit:cover;
+    filter:saturate(0.9) brightness(0.68);
+    transform:scale(1.08);
+  }
+  .hero-media::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(19,15,14,0.35) 0%, rgba(19,15,14,0.25) 40%, rgba(19,15,14,0.96) 96%);
+  }
+  #embers{position:absolute;inset:0;z-index:1;pointer-events:none;}
+  .hero-inner{position:relative;z-index:2;width:100%;padding:0 6vw 5.5rem;}
+  @media(min-width:1000px){.hero-inner{padding:0 4vw 6rem;}}
+  .hero-eyebrow{margin-bottom:1.4rem;}
+  .hero h1{
+    font-size:clamp(2.6rem, 9vw, 6.4rem);
+    line-height:0.96;
+    max-width:16ch;
+  }
+  .hero h1 .sc{font-style:italic;font-weight:300;color:var(--brass-light);}
+  .char{display:inline-block;will-change:transform,opacity;}
+  .hero-sub{
+    margin-top:1.6rem;max-width:38ch;
+    font-size:1.02rem;color:var(--ivory-dim);line-height:1.6;
+  }
+  .hero-meta{
+    margin-top:2.6rem;display:flex;gap:2.6rem;flex-wrap:wrap;
+    font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--ivory-dim);
+    letter-spacing:0.04em;
+  }
+  .hero-meta strong{display:block;color:var(--ivory);font-family:'Work Sans';font-weight:500;font-size:0.85rem;margin-bottom:0.2rem;}
+  .scroll-cue{
+    position:absolute;right:6vw;bottom:2.4rem;z-index:2;
+    display:flex;align-items:center;gap:0.7rem;
+    font-family:'Space Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;
+    color:var(--ivory-dim);text-transform:uppercase;
+  }
+  @media(min-width:1000px){.scroll-cue{right:4vw;}}
+  .scroll-cue .stem{width:1px;height:34px;background:var(--ivory-dim);position:relative;overflow:hidden;}
+  .scroll-cue .stem::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--brass-light);animation:stemfall 2.2s ease-in-out infinite;}
+  @keyframes stemfall{0%{top:-100%;}100%{top:100%;}}
+
+  /* ---------- MARQUEE ---------- */
+  .marquee-band{background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:1.1rem 0;overflow:hidden;}
+  .marquee-track{display:flex;gap:3.2rem;white-space:nowrap;width:max-content;animation:marquee 28s linear infinite;}
+  .marquee-track span{font-family:'Space Mono',monospace;font-size:0.75rem;letter-spacing:0.14em;color:var(--ivory-dim);text-transform:uppercase;}
+  .marquee-track span em{color:var(--brass-light);font-style:normal;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  /* ---------- SECTION shared ---------- */
+  section{position:relative;padding:7.5rem 0;}
+  .section-head{margin-bottom:3.5rem;}
+  .section-head h2{font-size:clamp(2rem,4vw,3rem);margin-top:0.9rem;max-width:16ch;}
+
+  /* ---------- PHILOSOPHY ---------- */
+  .philosophy{background:var(--ink);}
+  .phil-grid{display:grid;grid-template-columns:1fr;gap:3rem;align-items:center;}
+  @media(min-width:900px){.phil-grid{grid-template-columns:0.9fr 1.1fr;gap:5rem;}}
+  .phil-media{aspect-ratio:4/5;overflow:hidden;position:relative;}
+  .phil-media img{filter:saturate(0.95) brightness(0.9);}
+  .phil-text p{font-size:1.08rem;line-height:1.8;color:var(--ivory-dim);margin-bottom:1.4rem;max-width:46ch;}
+  .phil-text p:first-of-type{color:var(--ivory);font-size:1.25rem;font-family:'Fraunces',serif;font-style:italic;font-weight:400;line-height:1.5;}
+  .signature-line{margin-top:2.2rem;display:flex;align-items:center;gap:1rem;}
+  .signature-line .sig-mark{font-family:'Fraunces',serif;font-style:italic;font-size:1.4rem;color:var(--brass-light);}
+  .signature-line .sig-role{font-family:'Space Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;color:var(--ivory-dim);text-transform:uppercase;}
+
+  /* ---------- TASTING MENU ---------- */
+  .menu-section{background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .menu-layout{display:grid;grid-template-columns:1fr;gap:0;}
+  @media(min-width:760px){.menu-layout{grid-template-columns:28px 1fr;}}
+  .track{position:relative;display:none;}
+  @media(min-width:760px){.track{display:block;}}
+  .track-line{position:absolute;top:6px;bottom:6px;left:50%;width:1px;background:var(--line);transform:translateX(-50%);}
+  .track-fill{position:absolute;top:6px;left:50%;width:1px;background:var(--brass-light);transform:translateX(-50%);height:0%;}
+
+  .course{
+    display:grid;grid-template-columns:1fr;gap:1.2rem;
+    padding:2.4rem 0;border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .course:first-child{padding-top:0;}
+  @media(min-width:640px){
+    .course{grid-template-columns:auto 88px 1fr auto;align-items:center;gap:1.8rem;}
+  }
+  .course-course{font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.16em;color:var(--brass-light);text-transform:uppercase;}
+  .course-thumb{width:88px;height:88px;overflow:hidden;flex-shrink:0;border:1px solid var(--line);perspective:400px;}
+  .course-thumb img{filter:saturate(0.9) brightness(0.92);transition:transform .25s ease-out;}
+  .course-body h3{font-family:'Fraunces',serif;font-weight:450;font-size:1.3rem;margin-bottom:0.35rem;}
+  .course-body p{font-size:0.92rem;color:var(--ivory-dim);line-height:1.55;max-width:52ch;}
+  .course-price{font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--ivory-dim);justify-self:end;white-space:nowrap;}
+  .menu-foot{margin-top:2.6rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--ivory-dim);}
+  .menu-foot .price-line{color:var(--ivory);}
+
+  /* ---------- STATS ---------- */
+  .stats{background:var(--ink);border-bottom:1px solid var(--line);}
+  .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2.4rem;}
+  @media(min-width:760px){.stats-grid{grid-template-columns:repeat(4,1fr);}}
+  .stat{border-left:1px solid var(--line);padding-left:1.4rem;}
+  .stat .num{font-family:'Fraunces',serif;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:450;color:var(--brass-light);line-height:1;}
+  .stat .lbl{margin-top:0.6rem;font-family:'Space Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ivory-dim);}
+
+  /* ---------- GALLERY (pinned horizontal) ---------- */
+  .gallery-pin{background:var(--ink);overflow:hidden;}
+  .gallery-pin .section-head{padding:0 6vw;}
+  @media(min-width:1000px){.gallery-pin .section-head{padding:0 4vw;}}
+  .gal-track{display:flex;gap:1.2rem;padding:0 6vw;will-change:transform;}
+  @media(min-width:1000px){.gal-track{padding:0 4vw;}}
+  .gal-item{flex:0 0 auto;width:min(78vw,460px);aspect-ratio:3/4;overflow:hidden;position:relative;}
+  .gal-item img{filter:saturate(0.9) brightness(0.85);}
+  .gal-item .cap{position:absolute;left:0;right:0;bottom:0;padding:1rem;font-family:'Space Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ivory);background:linear-gradient(0deg, rgba(19,15,14,0.85), transparent);}
+  /* mobile: native snap scroll instead of pin */
+  .gallery-pin.mobile-scroll .gal-track{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+  .gallery-pin.mobile-scroll .gal-item{scroll-snap-align:start;}
+
+  /* ---------- RESERVE ---------- */
+  .reserve{background:var(--wine);background-image:radial-gradient(120% 140% at 10% 0%, var(--wine-light) 0%, var(--wine) 55%);padding:6.5rem 0;}
+  .reserve-grid{display:grid;grid-template-columns:1fr;gap:3rem;}
+  @media(min-width:900px){.reserve-grid{grid-template-columns:1.1fr 0.9fr;align-items:end;}}
+  .reserve h2{font-size:clamp(2.2rem,5vw,3.6rem);max-width:14ch;}
+  .reserve p{color:rgba(239,231,218,0.8);max-width:44ch;margin-top:1.2rem;line-height:1.7;}
+  .reserve-details{font-family:'Space Mono',monospace;font-size:0.85rem;line-height:2.1;color:var(--ivory);}
+  .reserve-details .k{color:rgba(239,231,218,0.6);display:inline-block;width:88px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:0.8rem;
+    margin-top:2.2rem;padding:1rem 2rem;
+    background:var(--ivory);color:var(--ink);text-decoration:none;
+    font-family:'Space Mono',monospace;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;
+    transition:background .3s;
+    will-change:transform;
+  }
+  .btn:hover{background:var(--brass-light);}
+
+  footer{background:var(--ink);padding:3rem 0 2.2rem;border-top:1px solid var(--line);}
+  .foot-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1.4rem;align-items:center;}
+  .foot-grid .brand{font-size:0.95rem;}
+  .foot-links{display:flex;gap:1.6rem;font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--ivory-dim);letter-spacing:0.05em;}
+  .foot-links a{text-decoration:none;}
+
+  .reveal{opacity:0;transform:translateY(28px);}
+
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  @media (pointer:coarse){ .cursor-dot,.cursor-ring{display:none;} }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="cursor-dot" id="cdot"></div>
+<div class="cursor-ring" id="cring"></div>
+
+<div class="preloader" id="preloader">
+  <div class="pl-word" id="plword">Munson de Savour</div>
+  <div class="pl-bar"><div class="pl-bar-fill" id="plfill"></div></div>
+  <div class="pl-count" id="plcount">00%</div>
+</div>
+
+<nav>
+  <div class="brand">Munson <em>de Savour</em></div>
+  <div class="nav-links">
+    <a href="#philosophy" class="magnetic">Philosophy</a>
+    <a href="#menu" class="magnetic">Tasting Menu</a>
+    <a href="#gallery" class="magnetic">The Room</a>
+  </div>
+  <a class="nav-cta magnetic" href="#reserve">Reserve</a>
+</nav>
+
+<header class="hero">
+  <div class="hero-media">
+    <img id="hero-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1800&q=80" alt="A plated dish at Munson de Savour, dramatically lit">
+  </div>
+  <canvas id="embers"></canvas>
+  <div class="hero-inner">
+    <div class="eyebrow hero-eyebrow">Benin City · Tasting Menu Only</div>
+    <h1 id="hero-h1">Nigerian soul, <span class="sc">French hand.</span></h1>
+    <p class="hero-sub">Seven courses built around the market, not the trend — egusi and uziza reworked with the technique of a French kitchen, served to fourteen tables a night.</p>
+    <div class="hero-meta">
+      <div><strong>Seatings</strong>7 pm &amp; 9:15 pm, Tue–Sat</div>
+      <div><strong>Menu</strong>₦185,000 per guest</div>
+      <div><strong>Location</strong>Ekosodin, Benin City</div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span class="stem"></span>Scroll</div>
+</header>
+
+<div class="marquee-band">
+  <div class="marquee-track" id="marquee">
+    <span>Gourmet Africa <em>·</em></span><span>Lagos Eater <em>·</em></span><span>Condé Nast Traveler <em>·</em></span><span>Africa's 50 Best <em>·</em></span><span>The Guardian Nigeria <em>·</em></span>
+    <span>Gourmet Africa <em>·</em></span><span>Lagos Eater <em>·</em></span><span>Condé Nast Traveler <em>·</em></span><span>Africa's 50 Best <em>·</em></span><span>The Guardian Nigeria <em>·</em></span>
+  </div>
+</div>
+
+<section class="philosophy" id="philosophy">
+  <div class="wrap phil-grid">
+    <div class="phil-media reveal">
+      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1000&q=80" alt="Close plating detail of a tasting course" onerror="this.parentElement.style.background='linear-gradient(160deg,#5c1a2b,#1c1614)'; this.remove();">
+    </div>
+    <div class="phil-text">
+      <div class="eyebrow reveal">The Kitchen</div>
+      <div class="reveal">
+        <p>We don't translate Nigerian food for anyone. We just cook it with everything French technique has to offer.</p>
+        <p>Every ingredient on the tasting menu is sourced within a day's drive of Benin City — periwinkle from the creeks, suya spice ground in-house, palm oil we press ourselves. What changes is the hand: sous-vide, veloutés, clarified stocks, the discipline of a French pass applied to dishes your grandmother would recognise.</p>
+        <p>Fourteen seats. One sitting. No à la carte.</p>
+      </div>
+      <div class="signature-line reveal">
+        <span class="sig-mark">Chef Aiyekóóto Munson</span>
+        <span class="sig-role">Chef-Patron</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="menu-section" id="menu">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">The Journey — Seven Courses</div>
+      <h2>One menu, tonight only.</h2>
+    </div>
+    <div class="menu-layout">
+      <div class="track" id="track">
+        <div class="track-line"></div>
+        <div class="track-fill" id="track-fill"></div>
+      </div>
+      <div id="course-list">
+        <div class="course reveal">
+          <div class="course-course">Amuse-Bouche</div>
+          <div class="course-thumb tilt"><img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=200&q=70" alt="Suya-spiced beef tartare" onerror="this.parentElement.style.background='#2a1f1c'; this.remove();"></div>
+          <div class="course-body"><h3>Suya Tartare</h3><p>Hand-cut beef, suya spice, scotch bonnet tuile, quail yolk.</p></div>
+          <div class="course-price">Included</div>
+        </div>
+        <div class="course reveal">
+          <div class="course-course">Entrée</div>
+          <div class="course-thumb tilt"><img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=200&q=70" alt="Egusi veloute" onerror="this.parentElement.style.background='#2a1f1c'; this.remove();"></div>
+          <div class="course-body"><h3>Egusi Velouté</h3><p>Smoked periwinkle, chive oil, toasted melon seed crumb.</p></div>
+          <div class="course-price">Included</div>
+        </div>
+        <div class="course reveal">
+          <div class="course-course">Poisson</div>
+          <div class="course-thumb tilt"><img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=200&q=70" alt="Pan-seared croaker" onerror="this.parentElement.style.background='#2a1f1c'; this.remove();"></div>
+          <div class="course-body"><h3>Croaker, Uziza Broth</h3><p>Pan-seared croaker, clarified uziza consommé, plantain crisp.</p></div>
+          <div class="course-price">Included</div>
+        </div>
+        <div class="course reveal">
+          <div class="course-course">Plat Principal</div>
+          <div class="course-thumb tilt"><img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=200&q=70" alt="Suya-crusted lamb rack" onerror="this.parentElement.style.background='#2a1f1c'; this.remove();"></div>
+          <div class="course-body"><h3>Suya-Crusted Lamb, Jollof Risotto</h3><p>Slow-roast rack, jollof-stained arborio, red palm oil jus.</p></div>
+          <div class="course-price">Included</div>
+        </div>
+        <div class="course reveal">
+          <div class="course-course">Fromage</div>
+          <div class="course-thumb tilt"><img src="https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=200&q=70" alt="Aged wara cheese" onerror="this.parentElement.style.background='#2a1f1c'; this.remove();"></div>
+          <div class="course-body"><h3>Aged Wara, Ata Rodo Honey</h3><p>House-cultured wara, chilli honey, cassava cracker.</p></div>
+          <div class="course-price">Included</div>
+        </div>
+        <div class="course reveal">
+          <div class="course-course">Dessert</div>
+          <div class="course-thumb tilt"><img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=200&q=70" alt="Chin chin mille-feuille" onerror="this.parentElement.style.background='#2a1f1c'; this.remove();"></div>
+          <div class="course-body"><h3>Chin Chin Mille-Feuille</h3><p>Layered chin chin pastry, zobo caramel, tonka bean cream.</p></div>
+          <div class="course-price">Included</div>
+        </div>
+        <div class="course reveal" style="border-bottom:none;">
+          <div class="course-course">Mignardises</div>
+          <div class="course-thumb tilt"><img src="https://images.unsplash.com/photo-1481391319762-47dff72954d9?auto=format&fit=crop&w=200&q=70" alt="Kuli-kuli praline" onerror="this.parentElement.style.background='#2a1f1c'; this.remove();"></div>
+          <div class="course-body"><h3>Kuli-Kuli Praline</h3><p>Groundnut praline, dried hibiscus pâte de fruit.</p></div>
+          <div class="course-price">Included</div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-foot reveal">
+      <div>Wine pairing, seven glasses <span class="price-line">+ ₦95,000</span></div>
+      <div>Dietary accommodations by request, 48 hours notice</div>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="wrap stats-grid">
+    <div class="stat reveal"><div class="num" data-count="3">0</div><div class="lbl">Years Open</div></div>
+    <div class="stat reveal"><div class="num" data-count="14">0</div><div class="lbl">Seats / Night</div></div>
+    <div class="stat reveal"><div class="num" data-count="7">0</div><div class="lbl">Courses</div></div>
+    <div class="stat reveal"><div class="num" data-count="1">0</div><div class="lbl">Sitting, No À La Carte</div></div>
+  </div>
+</section>
+
+<section class="gallery-pin" id="gallery">
+  <div class="section-head reveal">
+    <div class="eyebrow">The Room</div>
+    <h2>Fourteen seats, one pass in view.</h2>
+  </div>
+  <div class="gal-track" id="galTrack">
+    <div class="gal-item reveal"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=700&q=75" alt="Warm restaurant interior" onerror="this.parentElement.style.background='#3a1f28'; this.remove();"><div class="cap">The Pass</div></div>
+    <div class="gal-item reveal"><img src="https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=700&q=75" alt="Candlelit table setting" onerror="this.parentElement.style.background='#3a1f28'; this.remove();"><div class="cap">Table Two</div></div>
+    <div class="gal-item reveal"><img src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=700&q=75" alt="Chef plating a dish" onerror="this.parentElement.style.background='#3a1f28'; this.remove();"><div class="cap">Plating, Course Four</div></div>
+    <div class="gal-item reveal"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=700&q=75" alt="Fine dining plate detail" onerror="this.parentElement.style.background='#3a1f28'; this.remove();"><div class="cap">Dessert Detail</div></div>
+    <div class="gal-item reveal"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=700&q=75" alt="Chef's hands plating" onerror="this.parentElement.style.background='#3a1f28'; this.remove();"><div class="cap">The Chef's Table</div></div>
+  </div>
+</section>
+
+<section class="reserve" id="reserve">
+  <div class="wrap reserve-grid">
+    <div class="reveal">
+      <div class="eyebrow" style="color:var(--brass-light);">Reservations</div>
+      <h2>Fourteen seats a night. Book ahead.</h2>
+      <p>Two sittings, Tuesday through Saturday. We hold each table for fifteen minutes past the reservation time.</p>
+      <a class="btn magnetic" href="mailto:table@munsondesavour.com">Request a Table →</a>
+    </div>
+    <div class="reserve-details reveal">
+      <div><span class="k">Address</span>14 Airport Road, Ekosodin, Benin City</div>
+      <div><span class="k">Seatings</span>7:00 pm &amp; 9:15 pm</div>
+      <div><span class="k">Days</span>Tuesday — Saturday</div>
+      <div><span class="k">Phone</span>+234 800 000 0000</div>
+      <div><span class="k">Menu</span>₦185,000 · Pairing +₦95,000</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div class="brand">Munson <em>de Savour</em></div>
+    <div class="foot-links">
+      <a href="#menu">Tasting Menu</a>
+      <a href="#reserve">Reservations</a>
+      <a href="mailto:table@munsondesavour.com">table@munsondesavour.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fine = window.matchMedia('(pointer:fine)').matches;
+
+/* ---------- Custom cursor ---------- */
+if (fine && !reduceMotion) {
+  document.body.classList.add('has-cursor');
+  const dot = document.getElementById('cdot');
+  const ring = document.getElementById('cring');
+  let mx=0,my=0,rx=0,ry=0;
+  window.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; dot.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%)`; });
+  function loop(){ rx += (mx-rx)*0.15; ry += (my-ry)*0.15; ring.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-50%)`; requestAnimationFrame(loop); }
+  loop();
+  document.querySelectorAll('a, button, .tilt').forEach(el=>{
+    el.addEventListener('mouseenter', ()=>ring.classList.add('hover'));
+    el.addEventListener('mouseleave', ()=>ring.classList.remove('hover'));
+  });
+}
+
+/* ---------- Magnetic buttons ---------- */
+if (fine && !reduceMotion && window.gsap) {
+  document.querySelectorAll('.magnetic').forEach(el=>{
+    el.addEventListener('mousemove', e=>{
+      const r = el.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width/2;
+      const y = e.clientY - r.top - r.height/2;
+      gsap.to(el, {x:x*0.3, y:y*0.4, duration:0.4, ease:'power2.out'});
+    });
+    el.addEventListener('mouseleave', ()=>{ gsap.to(el, {x:0, y:0, duration:0.5, ease:'elastic.out(1,0.4)'}); });
+  });
+}
+
+/* ---------- Tilt on course thumbnails ---------- */
+if (fine && !reduceMotion) {
+  document.querySelectorAll('.tilt').forEach(el=>{
+    const img = el.querySelector('img');
+    if(!img) return;
+    el.addEventListener('mousemove', e=>{
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left)/r.width - 0.5;
+      const py = (e.clientY - r.top)/r.height - 0.5;
+      img.style.transform = `scale(1.15) rotateX(${py*-14}deg) rotateY(${px*14}deg)`;
+    });
+    el.addEventListener('mouseleave', ()=>{ img.style.transform='scale(1) rotateX(0) rotateY(0)'; });
+  });
+}
+
+/* ---------- Ember particles in hero ---------- */
+(function(){
+  const canvas = document.getElementById('embers');
+  if(!canvas || reduceMotion) return;
+  const ctx = canvas.getContext('2d');
+  let w,h,particles;
+  function size(){ w=canvas.width=canvas.offsetWidth; h=canvas.height=canvas.offsetHeight; }
+  function makeParticles(){
+    particles = Array.from({length:36}, ()=>({
+      x:Math.random()*w, y:h+Math.random()*h,
+      r:Math.random()*1.8+0.4,
+      s:Math.random()*0.6+0.15,
+      drift:(Math.random()-0.5)*0.4,
+      o:Math.random()*0.5+0.15
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p=>{
+      p.y -= p.s; p.x += Math.sin(p.y*0.01)*p.drift;
+      if(p.y < -10){ p.y = h+10; p.x = Math.random()*w; }
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(211,180,131,${p.o})`;
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', size);
+  size(); makeParticles(); draw();
+})();
+
+/* ---------- Split hero headline into chars ---------- */
+function splitChars(el){
+  const words = el.textContent.split(' ');
+  el.innerHTML = '';
+  // rebuild preserving the italic span for "French hand."
+}
+(function(){
+  const h1 = document.getElementById('hero-h1');
+  const plainText = "Nigerian soul, ";
+  const scText = "French hand.";
+  h1.innerHTML = '';
+  plainText.split('').forEach(ch=>{
+    const s = document.createElement('span'); s.className='char'; s.textContent = ch==' '?'\u00A0':ch;
+    h1.appendChild(s);
+  });
+  const scSpan = document.createElement('span'); scSpan.className='sc';
+  scText.split('').forEach(ch=>{
+    const s = document.createElement('span'); s.className='char'; s.textContent = ch==' '?'\u00A0':ch;
+    scSpan.appendChild(s);
+  });
+  h1.appendChild(scSpan);
+})();
+
+/* ---------- Preloader ---------- */
+window.addEventListener('load', ()=>{
+  const fill = document.getElementById('plfill');
+  const count = document.getElementById('plcount');
+  const pre = document.getElementById('preloader');
+  let n = 0;
+  const timer = setInterval(()=>{
+    n += Math.floor(Math.random()*12)+6;
+    if(n>=100){ n=100; clearInterval(timer); finish(); }
+    fill.style.width = n+'%';
+    count.textContent = String(n).padStart(2,'0')+'%';
+  }, 90);
+  function finish(){
+    setTimeout(()=>{
+      if (window.gsap) {
+        gsap.to(pre, {yPercent:-100, duration:0.9, ease:'power3.inOut', onComplete:()=>{ pre.style.display='none'; startHero(); }});
+      } else {
+        pre.style.display='none'; startHero();
+      }
+    }, 250);
+  }
+});
+
+/* ---------- Main animations ---------- */
+function startHero(){
+  if (!(window.gsap && window.ScrollTrigger)) { revealAllFallback(); return; }
+  gsap.registerPlugin(ScrollTrigger);
+
+  if (!reduceMotion) {
+    const tl = gsap.timeline({defaults:{ease:'power3.out'}});
+    tl.to('#hero-img', {scale:1, duration:1.6}, 0)
+      .from('.hero-eyebrow', {opacity:0, y:16, duration:0.8}, 0.1)
+      .from('.hero h1 .char', {opacity:0, y:26, stagger:0.02, duration:0.7}, 0.2)
+      .from('.hero-sub', {opacity:0, y:20, duration:0.8}, 0.55)
+      .from('.hero-meta', {opacity:0, y:16, duration:0.8}, 0.7);
+
+    gsap.utils.toArray('.reveal').forEach((el) => {
+      gsap.to(el, {opacity:1, y:0, duration:0.9, ease:'power2.out', scrollTrigger:{trigger:el, start:'top 88%'}});
+    });
+
+    const track = document.getElementById('track-fill');
+    if (track) {
+      gsap.to(track, {height:'100%', ease:'none', scrollTrigger:{trigger:'#course-list', start:'top 60%', end:'bottom 70%', scrub:0.6}});
+    }
+
+    // count-up stats
+    document.querySelectorAll('.stat .num').forEach(el=>{
+      const target = parseInt(el.dataset.count, 10);
+      ScrollTrigger.create({
+        trigger: el, start:'top 90%', once:true,
+        onEnter:()=>{ gsap.to(el, {innerText:target, duration:1.4, ease:'power1.out', snap:{innerText:1}}); }
+      });
+    });
+
+    // horizontal pinned gallery on desktop, native scroll on mobile
+    const galSection = document.querySelector('.gallery-pin');
+    const galTrack = document.getElementById('galTrack');
+    let mm = gsap.matchMedia();
+    mm.add('(min-width:820px)', ()=>{
+      const distance = () => galTrack.scrollWidth - window.innerWidth + 100;
+      gsap.to(galTrack, {
+        x: () => -distance(),
+        ease:'none',
+        scrollTrigger:{
+          trigger:galSection, start:'top top', end:()=>'+='+distance(),
+          scrub:true, pin:true, invalidateOnRefresh:true
+        }
+      });
+    });
+    mm.add('(max-width:819px)', ()=>{ galSection.classList.add('mobile-scroll'); });
+
+  } else {
+    revealAllFallback();
+  }
+}
+function revealAllFallback(){
+  document.querySelectorAll('.reveal').forEach(el => { el.style.opacity = 1; el.style.transform = 'none'; });
+  document.querySelectorAll('.stat .num').forEach(el=>{ el.textContent = el.dataset.count; });
+}
+</script>
+
+</body>
+</html>
